@@ -9,6 +9,7 @@
 <script src="https://cdn.jsdelivr.net/npm/qr-code-styling/lib/qr-code-styling.js"></script>
 
 <style>
+
 *{box-sizing:border-box}
 
 body{
@@ -20,24 +21,30 @@ body{
     align-items:center;
     background:radial-gradient(circle at 30% 20%,#111,#1b2735,#090a0f);
     color:white;
-    padding-bottom:100px; /* tránh nút support che nội dung */
+    padding:15px;
 }
 
+/* container */
+
 .container{
-    width:95%;
+    width:100%;
     max-width:520px;
-    padding:35px;
-    border-radius:28px;
+    padding:28px;
+    border-radius:26px;
     background:rgba(255,255,255,0.05);
     backdrop-filter:blur(30px);
     box-shadow:0 30px 80px rgba(0,0,0,0.6);
 }
 
+/* title */
+
 h1{
     text-align:center;
     font-weight:600;
-    margin-bottom:25px;
+    margin-bottom:22px;
 }
+
+/* input */
 
 .input-group{
     display:flex;
@@ -54,6 +61,8 @@ input[type="text"]{
     color:white;
     outline:none;
 }
+
+/* buttons */
 
 button{
     padding:12px 18px;
@@ -80,10 +89,14 @@ button.success{
     margin-bottom:5px;
 }
 
+/* slider */
+
 input[type="range"]{
     width:100%;
     margin-bottom:20px;
 }
+
+/* logo */
 
 .logo-btn{
     display:inline-block;
@@ -104,6 +117,8 @@ input[type="file"]{
     display:none;
 }
 
+/* QR */
+
 .qr-wrapper{
     margin-top:15px;
     padding:25px;
@@ -114,13 +129,14 @@ input[type="file"]{
     align-items:center;
 }
 
-/* QR responsive */
 .qr-wrapper canvas,
 .qr-wrapper img{
     width:100% !important;
-    max-width:300px;
+    max-width:300px !important;
     height:auto !important;
 }
+
+/* main buttons */
 
 .buttons{
     display:grid;
@@ -129,27 +145,27 @@ input[type="file"]{
     margin-top:20px;
 }
 
-/* Support button */
+/* support button */
 
 .support-btn{
-    position:fixed;
-    bottom:25px;
-    right:25px;
+    display:block;
+    margin-top:18px;
     padding:14px 22px;
     border-radius:50px;
     font-weight:600;
     font-size:14px;
     text-decoration:none;
     color:white;
+    text-align:center;
     background:linear-gradient(45deg,#ff9800,#ff1744);
     box-shadow:0 10px 30px rgba(0,0,0,0.5);
-    z-index:999;
     overflow:hidden;
+    position:relative;
     transition:0.3s;
 }
 
 .support-btn:hover{
-    transform:translateY(-4px) scale(1.03);
+    transform:translateY(-3px);
 }
 
 .support-btn::before{
@@ -174,40 +190,32 @@ input[type="file"]{
     100%{ transform:translateX(100%) rotate(25deg); }
 }
 
-/* MOBILE OPTIMIZATION */
+/* mobile */
 
-@media (max-width:600px){
+@media (max-width:480px){
 
 .container{
-    padding:25px;
+    padding:22px;
 }
 
-.buttons{
-    grid-template-columns:1fr;
-}
-
-.input-group{
-    flex-direction:column;
+h1{
+    font-size:22px;
 }
 
 button{
-    width:100%;
-}
-
-.support-btn{
-    right:50%;
-    transform:translateX(50%);
-    bottom:10px;
-    font-size:12px;
-    padding:10px 16px;
+    font-size:13px;
+    padding:12px;
 }
 
 }
+
 </style>
 </head>
+
 <body>
 
 <div class="container">
+
 <h1>QR Studio 2026</h1>
 
 <div class="input-group">
@@ -232,15 +240,16 @@ button{
     <button id="downloadBtn">Tải QR</button>
 </div>
 
-</div>
-
 <a class="support-btn"
-   href="https://s.shopee.vn/AUoygLuibF"
-   target="_blank">
-   Ủng hộ tác giả với 1 cú nhấp chuột
+href="https://s.shopee.vn/AUoygLuibF"
+target="_blank">
+Ủng hộ tác giả với 1 cú nhấp chuột
 </a>
 
+</div>
+
 <script>
+
 let qrColor = "#000000";
 
 let qrCode = new QRCodeStyling({
@@ -342,6 +351,7 @@ function showSuccess(btn,original){
         btn.textContent=original;
     },2000);
 }
+
 </script>
 
 </body>
