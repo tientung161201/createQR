@@ -1,358 +1,1107 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="vi" class="dark">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>QR Studio 2026</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/qr-code-styling/lib/qr-code-styling.js"></script>
-
-<style>
-
-*{box-sizing:border-box}
-
-body{
-    margin:0;
-    font-family:'Inter',sans-serif;
-    min-height:100vh;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    background:radial-gradient(circle at 30% 20%,#111,#1b2735,#090a0f);
-    color:white;
-    padding:15px;
-}
-
-/* container */
-
-.container{
-    width:100%;
-    max-width:520px;
-    padding:28px;
-    border-radius:26px;
-    background:rgba(255,255,255,0.05);
-    backdrop-filter:blur(30px);
-    box-shadow:0 30px 80px rgba(0,0,0,0.6);
-}
-
-/* title */
-
-h1{
-    text-align:center;
-    font-weight:600;
-    margin-bottom:22px;
-}
-
-/* input */
-
-.input-group{
-    display:flex;
-    gap:10px;
-    margin-bottom:20px;
-}
-
-input[type="text"]{
-    flex:1;
-    padding:14px;
-    border-radius:16px;
-    border:none;
-    background:rgba(255,255,255,0.08);
-    color:white;
-    outline:none;
-}
-
-/* buttons */
-
-button{
-    padding:12px 18px;
-    border-radius:16px;
-    border:none;
-    font-size:14px;
-    cursor:pointer;
-    background:linear-gradient(45deg,#ff4e50,#8e2de2);
-    color:white;
-    transition:0.3s;
-}
-
-button:hover{
-    transform:translateY(-2px);
-}
-
-button.success{
-    background:linear-gradient(45deg,#00c853,#64dd17);
-}
-
-.label{
-    font-size:13px;
-    opacity:0.7;
-    margin-bottom:5px;
-}
-
-/* slider */
-
-input[type="range"]{
-    width:100%;
-    margin-bottom:20px;
-}
-
-/* logo */
-
-.logo-btn{
-    display:inline-block;
-    padding:10px 18px;
-    border-radius:20px;
-    background:rgba(255,255,255,0.1);
-    border:1px solid rgba(255,255,255,0.2);
-    cursor:pointer;
-    margin-bottom:15px;
-    transition:0.3s;
-}
-
-.logo-btn:hover{
-    background:rgba(255,255,255,0.2);
-}
-
-input[type="file"]{
-    display:none;
-}
-
-/* QR */
-
-.qr-wrapper{
-    margin-top:15px;
-    padding:25px;
-    border-radius:24px;
-    background:white;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-}
-
-.qr-wrapper canvas,
-.qr-wrapper img{
-    width:100% !important;
-    max-width:300px !important;
-    height:auto !important;
-}
-
-/* main buttons */
-
-.buttons{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:12px;
-    margin-top:20px;
-}
-
-/* support button */
-
-.support-btn{
-    display:block;
-    margin-top:18px;
-    padding:14px 22px;
-    border-radius:50px;
-    font-weight:600;
-    font-size:14px;
-    text-decoration:none;
-    color:white;
-    text-align:center;
-    background:linear-gradient(45deg,#ff9800,#ff1744);
-    box-shadow:0 10px 30px rgba(0,0,0,0.5);
-    overflow:hidden;
-    position:relative;
-    transition:0.3s;
-}
-
-.support-btn:hover{
-    transform:translateY(-3px);
-}
-
-.support-btn::before{
-    content:"";
-    position:absolute;
-    top:-50%;
-    left:-50%;
-    width:200%;
-    height:200%;
-    background:linear-gradient(
-        120deg,
-        transparent 40%,
-        rgba(255,255,255,0.6) 50%,
-        transparent 60%
-    );
-    transform:rotate(25deg);
-    animation:sparkle 3s infinite;
-}
-
-@keyframes sparkle{
-    0%{ transform:translateX(-100%) rotate(25deg); }
-    100%{ transform:translateX(100%) rotate(25deg); }
-}
-
-/* mobile */
-
-@media (max-width:480px){
-
-.container{
-    padding:22px;
-}
-
-h1{
-    font-size:22px;
-}
-
-button{
-    font-size:13px;
-    padding:12px;
-}
-
-}
-
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Halftone QR Studio — Tạo QR Nhúng Ảnh Đen Trắng 800×800</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Reliable QR Code Generator & jsQR Scanner CDNs -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #09090b;
+            color: #f4f4f5;
+        }
+        .font-mono-code {
+            font-family: 'JetBrains Mono', monospace;
+        }
+        /* Keep 800x800 QR canvas ultra-sharp */
+        #outputCanvas {
+            image-rendering: -moz-crisp-edges;
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+            image-rendering: pixelated;
+        }
+        /* Sleek Custom Sliders */
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            height: 6px;
+            background: #27272a;
+            border-radius: 999px;
+            outline: none;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #10b981;
+            cursor: pointer;
+            border: 2px solid #09090b;
+            box-shadow: 0 0 0 1px #10b981;
+            transition: transform 0.15s ease;
+        }
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.15);
+        }
+    </style>
 </head>
+<body class="min-h-screen bg-zinc-950 text-zinc-100 antialiased selection:bg-emerald-500 selection:text-zinc-950">
 
-<body>
+    <!-- Main Container -->
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 py-8 flex flex-col gap-6">
 
-<div class="container">
+        <!-- Header -->
+        <header class="text-center space-y-1.5">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-900 border border-zinc-800 text-emerald-400 text-xs font-mono-code">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                HALFTONE QR ENGINE • 800×800 PX
+            </div>
+            <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-white">
+                Tạo Mã QR Nhúng Ảnh Đen Trắng
+            </h1>
+            <p class="text-sm text-zinc-400 max-w-xl mx-auto">
+                Tải mã QR gốc và hình ảnh bất kỳ lên. Hệ thống tự động chuyển ảnh sang đen trắng, nhúng vào cấu trúc mã QR và xuất ảnh chuẩn <span class="text-zinc-200 font-medium">800×800px</span>.
+            </p>
+        </header>
 
-<h1>QR Studio 2026</h1>
+        <!-- TOP SECTION: 2 INPUT UPLOAD BUTTONS / CARDS -->
+        <section class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-<div class="input-group">
-    <input type="text" id="text" placeholder="Nhập hoặc dán nội dung...">
-    <button id="pasteBtn">Dán</button>
-</div>
+            <!-- INPUT 1: ORIGINAL QR CODE -->
+            <div class="bg-zinc-900/90 border border-zinc-800 rounded-2xl p-5 flex flex-col justify-between gap-4 shadow-lg">
+                <div class="flex items-start justify-between gap-3">
+                    <div class="flex items-center gap-2.5">
+                        <span class="w-7 h-7 rounded-lg bg-emerald-500/15 border border-emerald-500/40 text-emerald-400 font-bold text-sm flex items-center justify-center">1</span>
+                        <div>
+                            <h2 class="font-semibold text-base text-white">Dữ Liệu QR Gốc (Ảnh QR / Văn Bản Tiếng Việt)</h2>
+                            <p class="text-xs text-zinc-400">Tải ảnh QR gốc hoặc nhập trực tiếp tiếng Việt, Link</p>
+                        </div>
+                    </div>
+                    <!-- Thumbnail preview of uploaded QR -->
+                    <div id="qrThumbContainer" class="w-11 h-11 rounded-lg bg-zinc-950 border border-zinc-800 flex items-center justify-center overflow-hidden shrink-0">
+                        <svg class="w-5 h-5 text-zinc-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/>
+                        </svg>
+                    </div>
+                </div>
 
-<div class="label">Màu QR (đen mặc định)</div>
-<input type="range" id="colorSlider" min="-1" max="270" value="-1">
+                <!-- Upload Button 1 -->
+                <label for="fileQrInput" class="cursor-pointer group relative w-full py-3 px-4 rounded-xl bg-zinc-950 hover:bg-zinc-800/80 border-2 border-dashed border-zinc-700 hover:border-emerald-500 transition flex items-center justify-center gap-2.5 text-sm font-semibold text-zinc-200 hover:text-white">
+                    <svg class="w-5 h-5 text-emerald-400 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+                    </svg>
+                    <span>Tải Ảnh Mã QR Gốc Lên</span>
+                    <input id="fileQrInput" type="file" accept="image/*" class="hidden">
+                </label>
 
-<label class="logo-btn">
-    Thêm Logo
-    <input type="file" id="logoInput" accept="image/*">
-</label>
+                <!-- Decoded / Editable QR Content (Full UTF-8 Vietnamese Support) -->
+                <div class="space-y-2">
+                    <div class="flex items-center justify-between text-xs">
+                        <span id="qrDecodeStatus" class="text-emerald-400 font-medium">✓ Nội dung QR (Chuẩn UTF-8 Tiếng Việt):</span>
+                        <span id="byteCountBadge" class="text-zinc-400 font-mono-code text-[11px]">0 bytes</span>
+                    </div>
+                    <textarea id="qrContentInput" rows="2" placeholder="Nhập văn bản tiếng Việt có dấu, URL hoặc tải ảnh QR gốc..."
+                        class="w-full px-3 py-2 rounded-lg bg-zinc-950 border border-zinc-800 focus:border-emerald-500 focus:outline-none text-xs font-mono-code text-zinc-100 resize-none leading-relaxed">Học viện Kỹ thuật Quân sự - Military Technical Academy</textarea>
 
-<div class="qr-wrapper">
-    <div id="qr"></div>
-</div>
+                    <!-- Quick Preset Buttons for Testing Vietnamese & Links -->
+                    <div class="flex flex-wrap items-center gap-1.5 pt-0.5">
+                        <span class="text-[11px] text-zinc-400 mr-0.5">Thử nhanh:</span>
+                        <button type="button" data-sample-text="Học viện Kỹ thuật Quân sự - Military Technical Academy" class="sample-text-btn px-2 py-1 rounded bg-zinc-800 hover:bg-zinc-700 text-[11px] text-emerald-300 border border-zinc-700 transition">
+                            🇻🇳 Học viện KTQS
+                        </button>
+                        <button type="button" data-sample-text="Xin chào Việt Nam! Mã QR nghệ thuật nhúng ảnh đen trắng quét cực nhạy." class="sample-text-btn px-2 py-1 rounded bg-zinc-800 hover:bg-zinc-700 text-[11px] text-zinc-200 border border-zinc-700 transition">
+                            ✍️ Tiếng Việt có dấu
+                        </button>
+                        <button type="button" data-sample-text="https://facebook.com" class="sample-text-btn px-2 py-1 rounded bg-zinc-800 hover:bg-zinc-700 text-[11px] text-zinc-200 border border-zinc-700 transition">
+                            🔗 Link Web
+                        </button>
+                    </div>
 
-<div class="buttons">
-    <button id="copyBtn">Copy QR</button>
-    <button id="downloadBtn">Tải QR</button>
-</div>
+                    <!-- UTF-8 BOM Compatibility Toggle -->
+                    <label class="flex items-center gap-2 pt-1 cursor-pointer select-none text-[11px] text-zinc-400 hover:text-zinc-200">
+                        <input id="chkUtf8Bom" type="checkbox" class="w-3.5 h-3.5 rounded accent-emerald-500">
+                        <span>Đính kèm cờ UTF-8 BOM (Dành cho các ứng dụng quét QR đời cũ bị lỗi dấu)</span>
+                    </label>
+                </div>
+            </div>
 
-<a class="support-btn"
-href="https://s.shopee.vn/AUoygLuibF"
-target="_blank">
-Ủng hộ tác giả với 1 cú nhấp chuột
-</a>
+            <!-- INPUT 2: IMAGE TO EMBED -->
+            <div class="bg-zinc-900/90 border border-zinc-800 rounded-2xl p-5 flex flex-col justify-between gap-4 shadow-lg">
+                <div class="flex items-start justify-between gap-3">
+                    <div class="flex items-center gap-2.5">
+                        <span class="w-7 h-7 rounded-lg bg-emerald-500/15 border border-emerald-500/40 text-emerald-400 font-bold text-sm flex items-center justify-center">2</span>
+                        <div>
+                            <h2 class="font-semibold text-base text-white">Tải Hình Nhúng Vào</h2>
+                            <p class="text-xs text-zinc-400">Chân dung, mèo, logo, huy hiệu...</p>
+                        </div>
+                    </div>
+                    <!-- Thumbnail preview of uploaded Artwork -->
+                    <div id="artThumbContainer" class="w-11 h-11 rounded-lg bg-zinc-950 border border-zinc-800 flex items-center justify-center overflow-hidden shrink-0">
+                        <img id="artThumbImg" alt="Preview" class="w-full h-full object-cover">
+                    </div>
+                </div>
 
-</div>
+                <!-- Upload Button 2 -->
+                <label for="fileArtInput" class="cursor-pointer group relative w-full py-3.5 px-4 rounded-xl bg-zinc-950 hover:bg-zinc-800/80 border-2 border-dashed border-zinc-700 hover:border-emerald-500 transition flex items-center justify-center gap-2.5 text-sm font-semibold text-zinc-200 hover:text-white">
+                    <svg class="w-5 h-5 text-emerald-400 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                    </svg>
+                    <span>Chọn Hình Ảnh Cần Nhúng</span>
+                    <input id="fileArtInput" type="file" accept="image/*" class="hidden">
+                </label>
 
-<script>
+                <!-- Quick Sample Switcher -->
+                <div class="flex items-center justify-between gap-2 pt-0.5">
+                    <span class="text-xs text-zinc-400 shrink-0">Ảnh mẫu thử:</span>
+                    <div class="grid grid-cols-2 gap-2 w-full">
+                        <button type="button" id="btnSampleCat" class="px-2.5 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-xs font-medium text-white border border-zinc-700 transition">
+                            🐱 Mèo (Mẫu 1)
+                        </button>
+                        <button type="button" id="btnSampleSeal" class="px-2.5 py-1.5 rounded-lg bg-zinc-950 hover:bg-zinc-800 text-xs font-medium text-zinc-300 border border-zinc-800 transition">
+                            🎖️ Con Dấu (Mẫu 2)
+                        </button>
+                    </div>
+                </div>
+            </div>
 
-let qrColor = "#000000";
+        </section>
 
-let qrCode = new QRCodeStyling({
-    width:600,
-    height:600,
-    data:"",
-    margin:20,
-    dotsOptions:{
-        color:qrColor,
-        type:"square"
-    },
-    backgroundOptions:{
-        color:"#ffffff"
-    },
-    imageOptions:{
-        crossOrigin:"anonymous",
-        margin:5
-    }
-});
+        <!-- MIDDLE SECTION: REAL-TIME IMAGE ADJUSTMENT CONTROLS -->
+        <section class="bg-zinc-900/90 border border-zinc-800 rounded-2xl p-4 sm:p-5 shadow-lg space-y-4">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b border-zinc-800 pb-3">
+                <div class="flex items-center gap-2">
+                    <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/>
+                    </svg>
+                    <h3 class="text-xs font-semibold uppercase tracking-wider text-zinc-300">Tinh chỉnh ảnh đen trắng (Cập nhật thời gian thực)</h3>
+                </div>
 
-qrCode.append(document.getElementById("qr"));
+                <!-- Dither Mode Pills -->
+                <div class="flex items-center gap-1.5 bg-zinc-950 p-1 rounded-lg border border-zinc-800">
+                    <button type="button" data-mode="atkinson" class="mode-btn px-2.5 py-1 rounded-md text-xs font-medium bg-emerald-500 text-zinc-950 transition">
+                        Hạt Mịn (Atkinson)
+                    </button>
+                    <button type="button" data-mode="floyd" class="mode-btn px-2.5 py-1 rounded-md text-xs font-medium text-zinc-400 hover:text-white transition">
+                        Chi Tiết (Floyd)
+                    </button>
+                    <button type="button" data-mode="threshold" class="mode-btn px-2.5 py-1 rounded-md text-xs font-medium text-zinc-400 hover:text-white transition">
+                        Nét Đậm (Con dấu)
+                    </button>
+                </div>
+            </div>
 
-const textInput = document.getElementById("text");
-const colorSlider = document.getElementById("colorSlider");
-const pasteBtn = document.getElementById("pasteBtn");
-const logoInput = document.getElementById("logoInput");
-const copyBtn = document.getElementById("copyBtn");
-const downloadBtn = document.getElementById("downloadBtn");
+            <!-- 4 Real-time Sliders -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <!-- Brightness / Threshold -->
+                <div class="bg-zinc-950/70 border border-zinc-800/80 rounded-xl p-3">
+                    <div class="flex justify-between text-xs mb-2">
+                        <span class="text-zinc-300 font-medium">Độ sáng</span>
+                        <span id="lblBrightness" class="font-mono-code text-emerald-400">10</span>
+                    </div>
+                    <input id="rngBrightness" type="range" min="-80" max="80" value="10" class="w-full">
+                </div>
 
-function updateQR(){
-    qrCode.update({
-        data:textInput.value,
-        dotsOptions:{
-            color:qrColor,
-            type:"square"
+                <!-- Contrast -->
+                <div class="bg-zinc-950/70 border border-zinc-800/80 rounded-xl p-3">
+                    <div class="flex justify-between text-xs mb-2">
+                        <span class="text-zinc-300 font-medium">Độ tương phản</span>
+                        <span id="lblContrast" class="font-mono-code text-emerald-400">35</span>
+                    </div>
+                    <input id="rngContrast" type="range" min="-50" max="100" value="35" class="w-full">
+                </div>
+
+                <!-- Image Scale -->
+                <div class="bg-zinc-950/70 border border-zinc-800/80 rounded-xl p-3">
+                    <div class="flex justify-between text-xs mb-2">
+                        <span class="text-zinc-300 font-medium">Kích thước ảnh</span>
+                        <span id="lblScale" class="font-mono-code text-emerald-400">92%</span>
+                    </div>
+                    <input id="rngScale" type="range" min="50" max="140" value="92" class="w-full">
+                </div>
+
+                <!-- QR Density / Version -->
+                <div class="bg-zinc-950/70 border border-zinc-800/80 rounded-xl p-3">
+                    <div class="flex justify-between text-xs mb-2">
+                        <span class="text-zinc-300 font-medium">Độ chi tiết (Version)</span>
+                        <span id="lblVersion" class="font-mono-code text-emerald-400">10 (57×57)</span>
+                    </div>
+                    <input id="rngVersion" type="range" min="6" max="15" value="10" class="w-full">
+                </div>
+            </div>
+
+            <!-- Extra Toggles -->
+            <div class="flex flex-wrap items-center justify-between gap-3 pt-1 text-xs text-zinc-300">
+                <div class="flex flex-wrap items-center gap-5">
+                    <label class="inline-flex items-center gap-2 cursor-pointer select-none">
+                        <input id="chkClearBg" type="checkbox" checked class="w-4 h-4 rounded accent-emerald-500">
+                        <span>Làm sạch nền trắng quanh ảnh</span>
+                    </label>
+                    <label class="inline-flex items-center gap-2 cursor-pointer select-none">
+                        <input id="chkInvert" type="checkbox" class="w-4 h-4 rounded accent-emerald-500">
+                        <span>Đảo ngược Đen / Trắng</span>
+                    </label>
+                </div>
+                <button type="button" id="btnReset" class="text-xs text-zinc-400 hover:text-emerald-400 underline">
+                    Khôi phục mặc định
+                </button>
+            </div>
+        </section>
+
+        <!-- BOTTOM SECTION: REAL-TIME 800x800 PRODUCT QR & DOWNLOAD -->
+        <section class="bg-zinc-900/90 border border-zinc-800 rounded-2xl p-5 sm:p-7 shadow-xl flex flex-col items-center gap-5">
+
+            <div class="w-full flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+                    <h2 class="font-semibold text-base text-white">Mã QR Sản Phẩm (Thời Gian Thực)</h2>
+                </div>
+                <div class="flex items-center gap-2 text-xs font-mono-code">
+                    <span id="badgeVersion" class="px-2.5 py-1 rounded-md bg-zinc-950 border border-zinc-800 text-zinc-300">VERSION 10 · H</span>
+                    <span id="badgeModules" class="px-2.5 py-1 rounded-md bg-zinc-950 border border-zinc-800 text-zinc-300">57 × 57 MODULES</span>
+                    <span class="px-2.5 py-1 rounded-md bg-emerald-500/10 border border-emerald-500/30 text-emerald-400">800 × 800 PX</span>
+                </div>
+            </div>
+
+            <!-- 800x800 Canvas Frame -->
+            <div class="p-3 sm:p-4 bg-white rounded-2xl shadow-2xl border-4 border-zinc-800 flex items-center justify-center">
+                <canvas id="outputCanvas" width="800" height="800" class="w-full max-w-[420px] aspect-square block"></canvas>
+            </div>
+
+            <!-- Live Scan Verification Box (Matches Reference Screenshot) -->
+            <div id="scanVerifyBox" class="w-full max-w-[452px] rounded-xl border px-4 py-3 text-xs sm:text-sm transition-all bg-emerald-950/60 border-emerald-500/40 text-emerald-200">
+                <div class="flex items-start gap-2.5">
+                    <span id="scanVerifyIcon" class="font-bold text-emerald-400 text-base leading-none mt-0.5">✓</span>
+                    <div class="space-y-1 flex-1 min-w-0">
+                        <p id="scanVerifyText" class="font-medium leading-snug">
+                            Trình đọc QR đã giải mã thành công mã QR này. Hãy quét thử bằng camera điện thoại của bạn!
+                        </p>
+                        <p id="scanVerifyUrl" class="font-mono-code text-xs text-emerald-300/90 truncate"></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DOWNLOAD 800x800 BUTTON -->
+            <div class="w-full max-w-[452px] flex flex-col sm:flex-row gap-3">
+                <button type="button" id="btnDownload800" class="w-full py-4 px-6 rounded-xl bg-emerald-500 hover:bg-emerald-400 active:scale-[0.99] text-zinc-950 font-bold text-base shadow-lg shadow-emerald-500/20 transition flex items-center justify-center gap-2.5">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                    </svg>
+                    <span>Tải Về Mã QR (800 × 800 PNG)</span>
+                </button>
+            </div>
+
+        </section>
+
+    </div>
+
+    <script>
+        /***********************************************************************
+         * 1. CREATE DEFAULT SAMPLE ARTWORKS (CAT & SEAL) SO IT WORKS IMMEDIATELY
+         ***********************************************************************/
+        function generateSampleArtwork(type) {
+            const c = document.createElement('canvas');
+            c.width = 500;
+            c.height = 500;
+            const ctx = c.getContext('2d');
+
+            // Pure white background
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, 500, 500);
+
+            if (type === 'cat') {
+                ctx.save();
+                ctx.translate(250, 265);
+
+                // Ears
+                ctx.fillStyle = '#111111';
+                ctx.beginPath();
+                ctx.moveTo(-135, -60);
+                ctx.lineTo(-155, -210);
+                ctx.lineTo(-45, -125);
+                ctx.closePath();
+                ctx.fill();
+
+                ctx.beginPath();
+                ctx.moveTo(135, -60);
+                ctx.lineTo(155, -210);
+                ctx.lineTo(45, -125);
+                ctx.closePath();
+                ctx.fill();
+
+                // Inner ears
+                ctx.fillStyle = '#e4e4e7';
+                ctx.beginPath();
+                ctx.moveTo(-120, -75);
+                ctx.lineTo(-135, -175);
+                ctx.lineTo(-65, -115);
+                ctx.closePath();
+                ctx.fill();
+
+                ctx.beginPath();
+                ctx.moveTo(120, -75);
+                ctx.lineTo(135, -175);
+                ctx.lineTo(65, -115);
+                ctx.closePath();
+                ctx.fill();
+
+                // Chest / Body
+                const bodyGrad = ctx.createRadialGradient(0, 120, 15, 0, 120, 180);
+                bodyGrad.addColorStop(0, '#d4d4d8');
+                bodyGrad.addColorStop(0.7, '#71717a');
+                bodyGrad.addColorStop(1, '#18181b');
+                ctx.fillStyle = bodyGrad;
+                ctx.beginPath();
+                ctx.moveTo(-130, 55);
+                ctx.quadraticCurveTo(-165, 160, -145, 220);
+                ctx.lineTo(145, 220);
+                ctx.quadraticCurveTo(165, 160, 130, 55);
+                ctx.closePath();
+                ctx.fill();
+
+                // Head
+                const headGrad = ctx.createRadialGradient(0, -25, 10, 0, -25, 160);
+                headGrad.addColorStop(0, '#e4e4e7');
+                headGrad.addColorStop(0.65, '#a1a1aa');
+                headGrad.addColorStop(1, '#18181b');
+                ctx.fillStyle = headGrad;
+                ctx.beginPath();
+                ctx.ellipse(0, -25, 145, 120, 0, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Forehead Tabby Stripes
+                ctx.strokeStyle = '#09090b';
+                ctx.lineCap = 'round';
+                ctx.lineWidth = 12;
+                [-32, -11, 11, 32].forEach(x => {
+                    ctx.beginPath();
+                    ctx.moveTo(x * 0.5, -135);
+                    ctx.quadraticCurveTo(x * 1.25, -95, x * 0.8, -55);
+                    ctx.stroke();
+                });
+
+                // Cheek & Chest Dark Stripes
+                [-1, 1].forEach(dir => {
+                    ctx.lineWidth = 10;
+                    ctx.beginPath();
+                    ctx.moveTo(dir * 85, -35);
+                    ctx.quadraticCurveTo(dir * 120, -25, dir * 135, 0);
+                    ctx.stroke();
+
+                    ctx.beginPath();
+                    ctx.moveTo(dir * 70, 5);
+                    ctx.quadraticCurveTo(dir * 115, 15, dir * 132, 38);
+                    ctx.stroke();
+
+                    // Bold chest stripes
+                    ctx.lineWidth = 16;
+                    ctx.beginPath();
+                    ctx.moveTo(dir * 125, 85);
+                    ctx.quadraticCurveTo(dir * 65, 140, 0, 145);
+                    ctx.stroke();
+
+                    ctx.beginPath();
+                    ctx.moveTo(dir * 138, 130);
+                    ctx.quadraticCurveTo(dir * 70, 190, 0, 195);
+                    ctx.stroke();
+                });
+
+                // White Muzzle
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath();
+                ctx.ellipse(-28, 30, 35, 25, -0.15, 0, Math.PI * 2);
+                ctx.ellipse(28, 30, 35, 25, 0.15, 0, Math.PI * 2);
+                ctx.ellipse(0, 55, 38, 20, 0, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Eyes
+                [-56, 56].forEach(ex => {
+                    ctx.fillStyle = '#09090b';
+                    ctx.beginPath();
+                    ctx.ellipse(ex, -25, 35, 28, 0, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    ctx.fillStyle = '#f4f4f5';
+                    ctx.beginPath();
+                    ctx.ellipse(ex, -25, 27, 21, 0, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    ctx.fillStyle = '#09090b';
+                    ctx.beginPath();
+                    ctx.ellipse(ex, -25, 8, 19, 0, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    ctx.fillStyle = '#ffffff';
+                    ctx.beginPath();
+                    ctx.arc(ex - 6, -32, 4.5, 0, Math.PI * 2);
+                    ctx.fill();
+                });
+
+                // Nose & Mouth
+                ctx.fillStyle = '#18181b';
+                ctx.beginPath();
+                ctx.moveTo(-18, 8);
+                ctx.lineTo(18, 8);
+                ctx.lineTo(0, 28);
+                ctx.closePath();
+                ctx.fill();
+
+                ctx.strokeStyle = '#18181b';
+                ctx.lineWidth = 5;
+                ctx.beginPath();
+                ctx.moveTo(0, 26);
+                ctx.lineTo(0, 40);
+                ctx.moveTo(-30, 48);
+                ctx.quadraticCurveTo(-12, 38, 0, 40);
+                ctx.quadraticCurveTo(12, 38, 30, 48);
+                ctx.stroke();
+
+                // Whiskers
+                ctx.lineWidth = 3;
+                [-1, 1].forEach(dir => {
+                    for (let i = 0; i < 3; i++) {
+                        ctx.beginPath();
+                        ctx.moveTo(dir * 38, 26 + i * 7);
+                        ctx.quadraticCurveTo(dir * 120, 18 + i * 14, dir * 200, 35 + i * 20);
+                        ctx.stroke();
+                    }
+                });
+
+                ctx.restore();
+            } else {
+                // Circular Emblem / Seal
+                ctx.save();
+                ctx.translate(250, 250);
+                ctx.strokeStyle = '#000000';
+                ctx.fillStyle = '#000000';
+
+                ctx.lineWidth = 12;
+                ctx.beginPath();
+                ctx.arc(0, 0, 215, 0, Math.PI * 2);
+                ctx.stroke();
+
+                ctx.lineWidth = 4;
+                ctx.beginPath();
+                ctx.arc(0, 0, 196, 0, Math.PI * 2);
+                ctx.stroke();
+
+                ctx.lineWidth = 8;
+                ctx.beginPath();
+                ctx.arc(0, 0, 130, 0, Math.PI * 2);
+                ctx.stroke();
+
+                // Center Star & Atom Orbits
+                ctx.lineWidth = 6;
+                [-0.5, 0.5, 1.57].forEach(rot => {
+                    ctx.save();
+                    ctx.rotate(rot);
+                    ctx.beginPath();
+                    ctx.ellipse(0, 0, 95, 32, 0, 0, Math.PI * 2);
+                    ctx.stroke();
+                    ctx.restore();
+                });
+
+                // Bold Star in Center
+                ctx.beginPath();
+                for (let i = 0; i < 10; i++) {
+                    const r = i % 2 === 0 ? 42 : 17;
+                    const a = (i * Math.PI) / 5 - Math.PI / 2;
+                    if (i === 0) ctx.moveTo(Math.cos(a) * r, Math.sin(a) * r);
+                    else ctx.lineTo(Math.cos(a) * r, Math.sin(a) * r);
+                }
+                ctx.closePath();
+                ctx.fill();
+
+                // Ring Text with Vietnamese Diacritics
+                ctx.font = 'bold 26px Inter, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                const txt = "HỌC VIỆN KỸ THUẬT QUÂN SỰ ★ MTA ★ ";
+                for (let i = 0; i < txt.length; i++) {
+                    const angle = (i / txt.length) * Math.PI * 2 - Math.PI / 2;
+                    ctx.save();
+                    ctx.rotate(angle + Math.PI / 2);
+                    ctx.translate(0, -163);
+                    ctx.fillText(txt[i], 0, 0);
+                    ctx.restore();
+                }
+
+                ctx.restore();
+            }
+            return c;
         }
-    });
-}
 
-textInput.addEventListener("input",updateQR);
+        /***********************************************************************
+         * 2. UTF-8 VIETNAMESE ENCODING & DECODING ENGINE
+         *    Fixes qrcode-generator's default Latin-1 truncation & jsQR decoding
+         ***********************************************************************/
+        // Override qrcode-generator's stringToBytes so Byte mode writes strict UTF-8 bytes
+        qrcode.stringToBytes = function(str) {
+            return Array.from(new TextEncoder().encode(str));
+        };
 
-pasteBtn.addEventListener("click",async()=>{
-    try{
-        const text = await navigator.clipboard.readText();
-        textInput.value = text;
-        updateQR();
-    }catch{
-        alert("Không thể đọc clipboard.");
-    }
-});
-
-colorSlider.addEventListener("input",()=>{
-    if(colorSlider.value == -1){
-        qrColor = "#000000";
-    }else{
-        qrColor = `hsl(${colorSlider.value},100%,50%)`;
-    }
-    updateQR();
-});
-
-colorSlider.addEventListener("wheel",function(e){
-    e.preventDefault();
-    let step = 5;
-    let newValue = parseInt(this.value) + (e.deltaY < 0 ? step : -step);
-    newValue = Math.min(this.max, Math.max(this.min, newValue));
-    this.value = newValue;
-    this.dispatchEvent(new Event("input"));
-});
-
-logoInput.addEventListener("change",function(){
-    const file=this.files[0];
-    if(file){
-        const reader=new FileReader();
-        reader.onload=function(e){
-            qrCode.update({ image:e.target.result });
+        // Decode raw byte array from jsQR into a clean UTF-8 Vietnamese string
+        function decodeQrBytesToUtf8(code) {
+            if (!code) return null;
+            if (code.binaryData && code.binaryData.length > 0) {
+                try {
+                    const bytes = new Uint8Array(code.binaryData);
+                    const utf8Text = new TextDecoder('utf-8', { fatal: true }).decode(bytes);
+                    // Strip optional UTF-8 BOM (\uFEFF) if present so comparison & display are clean
+                    return utf8Text.replace(/^\uFEFF/, '');
+                } catch (e) {
+                    // Fallback if binary payload wasn't valid UTF-8
+                }
+            }
+            return (code.data || '').replace(/^\uFEFF/, '');
         }
-        reader.readAsDataURL(file);
-    }
-});
 
-copyBtn.addEventListener("click",async()=>{
-    const blob = await qrCode.getRawData("png");
-    await navigator.clipboard.write([
-        new ClipboardItem({ "image/png": blob })
-    ]);
-    showSuccess(copyBtn,"Copy QR");
-});
+        /***********************************************************************
+         * 3. STATE MANAGEMENT
+         ***********************************************************************/
+        const state = {
+            qrText: 'Học viện Kỹ thuật Quân sự - Military Technical Academy',
+            useUtf8Bom: false,
+            artSource: generateSampleArtwork('cat'),
+            ditherMode: 'atkinson', // 'atkinson' | 'floyd' | 'threshold'
+            brightness: 10,
+            contrast: 35,
+            scale: 92,
+            minVersion: 10,
+            clearBg: true,
+            invert: false
+        };
 
-downloadBtn.addEventListener("click",()=>{
-    qrCode.download({name:"qr-code",extension:"png"});
-    showSuccess(downloadBtn,"Tải QR");
-});
+        // Update thumbnail with initial sample
+        document.getElementById('artThumbImg').src = state.artSource.toDataURL();
 
-function showSuccess(btn,original){
-    btn.classList.add("success");
-    btn.textContent="Thành công ✓";
-    setTimeout(()=>{
-        btn.classList.remove("success");
-        btn.textContent=original;
-    },2000);
-}
+        /***********************************************************************
+         * 4. ISO/IEC 18004 QR FUNCTIONAL PATTERN MASK
+         *    Preserves Finders, Separators, Format/Version Info, Alignment, Timing
+         ***********************************************************************/
+        function getAlignmentCoordinates(version) {
+            if (version <= 1) return [];
+            const intervals = Math.floor(version / 7) + 1;
+            const distance = 4 * version + 4; // distance between first (6) and last (N-7)
+            const step = Math.ceil(distance / intervals / 2) * 2;
+            const coords = [6];
+            for (let i = 0; i < intervals; i++) {
+                coords.push(6 + distance - (intervals - 1 - i) * step);
+            }
+            return coords;
+        }
 
-</script>
+        function createFunctionalMask(version, N) {
+            const mask = Array.from({ length: N }, () => new Uint8Array(N));
 
+            const fillRect = (r0, c0, r1, c1) => {
+                for (let r = Math.max(0, r0); r <= Math.min(N - 1, r1); r++) {
+                    for (let c = Math.max(0, c0); c <= Math.min(N - 1, c1); c++) {
+                        mask[r][c] = 1;
+                    }
+                }
+            };
+
+            // 1. Three 7x7 Finder Patterns + 1-module white separators (8x8 total on corners)
+            fillRect(0, 0, 7, 7);         // Top-Left
+            fillRect(0, N - 8, 7, N - 1); // Top-Right
+            fillRect(N - 8, 0, N - 1, 7); // Bottom-Left
+
+            // 2. Format Information bits (around Finders) - Critical for fast & reliable scanning
+            fillRect(0, 8, 8, 8);         // Top-Left vertical format strip
+            fillRect(8, 0, 8, 8);         // Top-Left horizontal format strip
+            fillRect(8, N - 8, 8, N - 1); // Top-Right horizontal format strip
+            fillRect(N - 7, 8, N - 1, 8); // Bottom-Left vertical format strip
+
+            // 3. Version Information blocks (for Version >= 7)
+            if (version >= 7) {
+                fillRect(0, N - 11, 5, N - 9);
+                fillRect(N - 11, 0, N - 9, 5);
+            }
+
+            // 4. Timing Patterns (Row 6 & Column 6)
+            for (let i = 0; i < N; i++) {
+                mask[6][i] = 1;
+                mask[i][6] = 1;
+            }
+
+            // 5. 5x5 Alignment Patterns
+            const alignCoords = getAlignmentCoordinates(version);
+            for (let rIdx = 0; rIdx < alignCoords.length; rIdx++) {
+                for (let cIdx = 0; cIdx < alignCoords.length; cIdx++) {
+                    const cr = alignCoords[rIdx];
+                    const cc = alignCoords[cIdx];
+                    // Skip if overlapping with any of the 3 Finder Patterns
+                    if (
+                        (cr <= 8 && cc <= 8) ||
+                        (cr <= 8 && cc >= N - 9) ||
+                        (cr >= N - 9 && cc <= 8)
+                    ) {
+                        continue;
+                    }
+                    fillRect(cr - 2, cc - 2, cr + 2, cc + 2);
+                }
+            }
+
+            // 6. Dark Module
+            if (4 * version + 9 < N) {
+                mask[4 * version + 9][8] = 1;
+            }
+
+            return mask;
+        }
+
+        /***********************************************************************
+         * 5. CONVERT TARGET IMAGE TO 3N × 3N BLACK & WHITE SUB-PIXEL GRID
+         ***********************************************************************/
+        function ditherImageToSubGrid(imgSource, subSize) {
+            const tempCanvas = document.createElement('canvas');
+            tempCanvas.width = subSize;
+            tempCanvas.height = subSize;
+            const ctx = tempCanvas.getContext('2d');
+
+            // Fill pure white background
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, subSize, subSize);
+
+            const scaleRatio = state.scale / 100;
+            const srcW = imgSource.naturalWidth || imgSource.width || 500;
+            const srcH = imgSource.naturalHeight || imgSource.height || 500;
+            const aspect = srcW / srcH;
+
+            let drawW = subSize * scaleRatio;
+            let drawH = subSize * scaleRatio;
+            if (aspect > 1) {
+                drawH = drawW / aspect;
+            } else {
+                drawW = drawH * aspect;
+            }
+
+            const dx = (subSize - drawW) / 2;
+            const dy = (subSize - drawH) / 2;
+            ctx.drawImage(imgSource, dx, dy, drawW, drawH);
+
+            const rgba = ctx.getImageData(0, 0, subSize, subSize).data;
+            const lum = new Float32Array(subSize * subSize);
+            const isNearWhiteBg = new Uint8Array(subSize * subSize);
+
+            const contrastFactor = (259 * (state.contrast + 255)) / (255 * (259 - state.contrast));
+            const brightOffset = state.brightness * 1.5;
+
+            for (let i = 0; i < lum.length; i++) {
+                const idx = i * 4;
+                const a = rgba[idx + 3] / 255;
+                const r = rgba[idx] * a + 255 * (1 - a);
+                const g = rgba[idx + 1] * a + 255 * (1 - a);
+                const b = rgba[idx + 2] * a + 255 * (1 - a);
+
+                let v = 0.299 * r + 0.587 * g + 0.114 * b;
+                if (state.invert) v = 255 - v;
+
+                v = contrastFactor * (v + brightOffset - 128) + 128;
+                v = Math.max(0, Math.min(255, v));
+                lum[i] = v;
+
+                if (v > 245) {
+                    isNearWhiteBg[i] = 1;
+                }
+            }
+
+            // Unsharp mask for crisp edges in small sub-modules
+            const work = new Float32Array(lum);
+            for (let y = 1; y < subSize - 1; y++) {
+                for (let x = 1; x < subSize - 1; x++) {
+                    const p = y * subSize + x;
+                    const avg = (lum[p - 1] + lum[p + 1] + lum[p - subSize] + lum[p + subSize]) * 0.25;
+                    work[p] = Math.max(0, Math.min(255, lum[p] + (lum[p] - avg) * 1.1));
+                }
+            }
+
+            // Dithering pass -> 1 = Black, 0 = White
+            const binary = new Uint8Array(subSize * subSize);
+            for (let y = 0; y < subSize; y++) {
+                for (let x = 0; x < subSize; x++) {
+                    const p = y * subSize + x;
+                    const oldVal = work[p];
+                    const newVal = oldVal < 128 ? 0 : 255;
+                    binary[p] = newVal === 0 ? 1 : 0;
+
+                    if (state.ditherMode === 'atkinson') {
+                        const err = (oldVal - newVal) / 8;
+                        if (x + 1 < subSize) work[p + 1] += err;
+                        if (x + 2 < subSize) work[p + 2] += err;
+                        if (x - 1 >= 0 && y + 1 < subSize) work[p + subSize - 1] += err;
+                        if (y + 1 < subSize) work[p + subSize] += err;
+                        if (x + 1 < subSize && y + 1 < subSize) work[p + subSize + 1] += err;
+                        if (y + 2 < subSize) work[p + subSize * 2] += err;
+                    } else if (state.ditherMode === 'floyd') {
+                        const err = oldVal - newVal;
+                        if (x + 1 < subSize) work[p + 1] += (err * 7) / 16;
+                        if (x - 1 >= 0 && y + 1 < subSize) work[p + subSize - 1] += (err * 3) / 16;
+                        if (y + 1 < subSize) work[p + subSize] += (err * 5) / 16;
+                        if (x + 1 < subSize && y + 1 < subSize) work[p + subSize + 1] += (err * 1) / 16;
+                    }
+                }
+            }
+
+            return { binary, isNearWhiteBg };
+        }
+
+        /***********************************************************************
+         * 6. MAIN HALFTONE QR GENERATOR -> RENDERS EXACT 800x800 CANVAS
+         ***********************************************************************/
+        function renderHalftoneQR() {
+            const rawText = (state.qrText || '').trim() || 'https://facebook.com';
+            // If UTF-8 BOM is enabled and string contains non-ASCII characters, prepend \uFEFF
+            const hasNonAscii = /[^\x00-\x7F]/.test(rawText);
+            const payloadToEncode = (state.useUtf8Bom && hasNonAscii) ? ('\uFEFF' + rawText) : rawText;
+
+            // Update UTF-8 byte count badge
+            const utf8Bytes = new TextEncoder().encode(payloadToEncode);
+            const byteBadge = document.getElementById('byteCountBadge');
+            if (byteBadge) {
+                byteBadge.textContent = `${utf8Bytes.length} bytes UTF-8`;
+            }
+
+            // Find lowest version >= state.minVersion that fits the UTF-8 byte stream at High (H) ECC
+            let qr = null;
+            let version = state.minVersion;
+            for (let v = state.minVersion; v <= 40; v++) {
+                try {
+                    const candidate = qrcode(v, 'H');
+                    // Explicitly use 'Byte' mode so our TextEncoder override encodes all Vietnamese diacritics
+                    candidate.addData(payloadToEncode, 'Byte');
+                    candidate.make();
+                    qr = candidate;
+                    version = v;
+                    break;
+                } catch (err) {
+                    // Increase version automatically if Vietnamese text is longer
+                }
+            }
+
+            if (!qr) return;
+
+            const N = qr.getModuleCount(); // e.g., 57 for Version 10
+            const subSize = N * 3;         // 3x3 sub-modules per QR module
+
+            // Update UI Badges
+            document.getElementById('badgeVersion').textContent = `VERSION ${version} · H`;
+            document.getElementById('badgeModules').textContent = `${N} × ${N} MODULES`;
+            document.getElementById('lblVersion').textContent = `${version} (${N}×${N})`;
+
+            const funcMask = createFunctionalMask(version, N);
+            const { binary, isNearWhiteBg } = ditherImageToSubGrid(state.artSource, subSize);
+
+            // Compose final 3N × 3N grid
+            const subGrid = new Uint8Array(subSize * subSize);
+
+            for (let r = 0; r < N; r++) {
+                for (let c = 0; c < N; c++) {
+                    const isQrDark = qr.isDark(r, c) ? 1 : 0;
+
+                    if (funcMask[r][c] === 1) {
+                        // Finder, Separator, Format Info, Timing, Alignment -> Solid 3x3 QR module
+                        for (let sr = 0; sr < 3; sr++) {
+                            for (let sc = 0; sc < 3; sc++) {
+                                subGrid[(r * 3 + sr) * subSize + (c * 3 + sc)] = isQrDark;
+                            }
+                        }
+                    } else {
+                        // Data / ECC module:
+                        // Center sub-pixel (1,1) = strict QR data bit
+                        // Outer 8 sub-pixels = dithered black & white artwork
+                        for (let sr = 0; sr < 3; sr++) {
+                            for (let sc = 0; sc < 3; sc++) {
+                                const sy = r * 3 + sr;
+                                const sx = c * 3 + sc;
+                                const idx = sy * subSize + sx;
+
+                                if (sr === 1 && sc === 1) {
+                                    subGrid[idx] = isQrDark;
+                                } else {
+                                    if (state.clearBg && isNearWhiteBg[idx]) {
+                                        subGrid[idx] = 0;
+                                    } else {
+                                        subGrid[idx] = binary[idx];
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Draw onto exact 800 x 800 Canvas
+            const canvas = document.getElementById('outputCanvas');
+            canvas.width = 800;
+            canvas.height = 800;
+            const ctx = canvas.getContext('2d');
+            ctx.imageSmoothingEnabled = false;
+
+            // Fill 800x800 pure white
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, 800, 800);
+
+            // Quiet zone padding around QR code (at least 4 modules = 12 sub-modules per side)
+            const quietSubModules = 12;
+            const totalSubWithMargin = subSize + quietSubModules * 2;
+            const scalePx = 800 / totalSubWithMargin;
+
+            ctx.fillStyle = '#000000';
+            for (let sy = 0; sy < subSize; sy++) {
+                for (let sx = 0; sx < subSize; sx++) {
+                    if (subGrid[sy * subSize + sx] === 1) {
+                        const x0 = Math.round((sx + quietSubModules) * scalePx);
+                        const y0 = Math.round((sy + quietSubModules) * scalePx);
+                        const x1 = Math.round((sx + quietSubModules + 1) * scalePx);
+                        const y1 = Math.round((sy + quietSubModules + 1) * scalePx);
+                        ctx.fillRect(x0, y0, Math.max(1, x1 - x0), Math.max(1, y1 - y0));
+                    }
+                }
+            }
+
+            // Verify generated 800x800 QR code in real-time using jsQR + UTF-8 TextDecoder
+            verifyOutputQR(canvas, rawText);
+        }
+
+        /***********************************************************************
+         * 7. REAL-TIME UTF-8 VERIFICATION & ROBUST UPLOAD DECODING (jsQR)
+         ***********************************************************************/
+        function verifyOutputQR(canvas, expectedText) {
+            const ctx = canvas.getContext('2d');
+            const imgData = ctx.getImageData(0, 0, 800, 800);
+            const result = jsQR(imgData.data, 800, 800, { inversionAttempts: 'dontInvert' });
+            const decodedUtf8 = decodeQrBytesToUtf8(result);
+
+            const box = document.getElementById('scanVerifyBox');
+            const icon = document.getElementById('scanVerifyIcon');
+            const txt = document.getElementById('scanVerifyText');
+            const urlEl = document.getElementById('scanVerifyUrl');
+
+            if (decodedUtf8 !== null && decodedUtf8 === expectedText) {
+                box.className = 'w-full max-w-[452px] rounded-xl border px-4 py-3 text-xs sm:text-sm transition-all bg-emerald-950/60 border-emerald-500/40 text-emerald-200';
+                icon.textContent = '✓';
+                icon.className = 'font-bold text-emerald-400 text-base leading-none mt-0.5';
+                txt.textContent = 'Trình đọc QR đã giải mã chính xác 100% tiếng Việt (UTF-8). Sẵn sàng tải về & in ấn!';
+                urlEl.textContent = `Kết quả quét: "${decodedUtf8}"`;
+            } else {
+                box.className = 'w-full max-w-[452px] rounded-xl border px-4 py-3 text-xs sm:text-sm transition-all bg-amber-950/60 border-amber-500/40 text-amber-200';
+                icon.textContent = '!';
+                icon.className = 'font-bold text-amber-400 text-base leading-none mt-0.5';
+                txt.textContent = 'Đã tạo mã QR. Nếu ảnh quá tối làm che điểm tâm QR, hãy tăng nhẹ "Độ sáng" hoặc bật "Làm sạch nền trắng".';
+                urlEl.textContent = `Nội dung gốc: "${expectedText}"`;
+            }
+        }
+
+        // Multi-scale QR image decoder with UTF-8 binaryData support
+        function decodeUploadedQRImage(img) {
+            const testSizes = [600, 900, 400, 1200];
+            for (const maxDim of testSizes) {
+                const c = document.createElement('canvas');
+                const ratio = Math.min(maxDim / img.width, maxDim / img.height, 1);
+                const w = Math.max(100, Math.round(img.width * ratio));
+                const h = Math.max(100, Math.round(img.height * ratio));
+                const pad = 40;
+                c.width = w + pad * 2;
+                c.height = h + pad * 2;
+                const ctx = c.getContext('2d');
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(0, 0, c.width, c.height);
+                ctx.drawImage(img, pad, pad, w, h);
+
+                const imgData = ctx.getImageData(0, 0, c.width, c.height);
+                const code = jsQR(imgData.data, c.width, c.height, {
+                    inversionAttempts: 'attemptBoth'
+                });
+                const decodedText = decodeQrBytesToUtf8(code);
+                if (decodedText) {
+                    return decodedText;
+                }
+            }
+            return null;
+        }
+
+        /***********************************************************************
+         * 8. EVENT LISTENERS (UPLOADS, VIETNAMESE INPUT, SLIDERS, DOWNLOAD)
+         ***********************************************************************/
+        // 1. Upload Original QR Image
+        document.getElementById('fileQrInput').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                const img = new Image();
+                img.onload = () => {
+                    // Show thumbnail
+                    document.getElementById('qrThumbContainer').innerHTML =
+                        `<img src="${ev.target.result}" class="w-full h-full object-cover" alt="QR">`;
+
+                    const decoded = decodeUploadedQRImage(img);
+                    const statusEl = document.getElementById('qrDecodeStatus');
+                    const inputEl = document.getElementById('qrContentInput');
+
+                    if (decoded) {
+                        state.qrText = decoded;
+                        inputEl.value = decoded;
+                        statusEl.textContent = '✓ Đã giải mã QR gốc (Chuẩn UTF-8):';
+                        statusEl.className = 'text-emerald-400 font-medium';
+                        renderHalftoneQR();
+                    } else {
+                        statusEl.textContent = '⚠ Không đọc được ảnh QR, hãy nhập văn bản bên dưới:';
+                        statusEl.className = 'text-amber-400 font-medium';
+                    }
+                };
+                img.src = ev.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+
+        // Manual edit of QR text (supports Vietnamese IME composition, paste, keyup)
+        const qrInputEl = document.getElementById('qrContentInput');
+        ['input', 'change', 'keyup', 'paste'].forEach(evtName => {
+            qrInputEl.addEventListener(evtName, () => {
+                state.qrText = qrInputEl.value;
+                renderHalftoneQR();
+            });
+        });
+
+        // Quick Preset Vietnamese & URL Buttons
+        document.querySelectorAll('.sample-text-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const sample = btn.getAttribute('data-sample-text');
+                state.qrText = sample;
+                qrInputEl.value = sample;
+                renderHalftoneQR();
+            });
+        });
+
+        // UTF-8 BOM Toggle
+        document.getElementById('chkUtf8Bom').addEventListener('change', (e) => {
+            state.useUtf8Bom = e.target.checked;
+            renderHalftoneQR();
+        });
+
+        // 2. Upload Target Image to Embed
+        document.getElementById('fileArtInput').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                const img = new Image();
+                img.onload = () => {
+                    state.artSource = img;
+                    document.getElementById('artThumbImg').src = ev.target.result;
+                    renderHalftoneQR();
+                };
+                img.src = ev.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+
+        // Sample Artwork Buttons
+        document.getElementById('btnSampleCat').addEventListener('click', () => {
+            state.artSource = generateSampleArtwork('cat');
+            document.getElementById('artThumbImg').src = state.artSource.toDataURL();
+            renderHalftoneQR();
+        });
+
+        document.getElementById('btnSampleSeal').addEventListener('click', () => {
+            state.artSource = generateSampleArtwork('seal');
+            document.getElementById('artThumbImg').src = state.artSource.toDataURL();
+            renderHalftoneQR();
+        });
+
+        // Dither Mode Buttons
+        document.querySelectorAll('.mode-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                state.ditherMode = btn.getAttribute('data-mode');
+                document.querySelectorAll('.mode-btn').forEach(b => {
+                    b.className = 'mode-btn px-2.5 py-1 rounded-md text-xs font-medium text-zinc-400 hover:text-white transition';
+                });
+                btn.className = 'mode-btn px-2.5 py-1 rounded-md text-xs font-medium bg-emerald-500 text-zinc-950 transition';
+                renderHalftoneQR();
+            });
+        });
+
+        // Real-Time Sliders
+        document.getElementById('rngBrightness').addEventListener('input', (e) => {
+            state.brightness = parseInt(e.target.value, 10);
+            document.getElementById('lblBrightness').textContent = state.brightness;
+            renderHalftoneQR();
+        });
+
+        document.getElementById('rngContrast').addEventListener('input', (e) => {
+            state.contrast = parseInt(e.target.value, 10);
+            document.getElementById('lblContrast').textContent = state.contrast;
+            renderHalftoneQR();
+        });
+
+        document.getElementById('rngScale').addEventListener('input', (e) => {
+            state.scale = parseInt(e.target.value, 10);
+            document.getElementById('lblScale').textContent = `${state.scale}%`;
+            renderHalftoneQR();
+        });
+
+        document.getElementById('rngVersion').addEventListener('input', (e) => {
+            state.minVersion = parseInt(e.target.value, 10);
+            renderHalftoneQR();
+        });
+
+        // Checkboxes
+        document.getElementById('chkClearBg').addEventListener('change', (e) => {
+            state.clearBg = e.target.checked;
+            renderHalftoneQR();
+        });
+
+        document.getElementById('chkInvert').addEventListener('change', (e) => {
+            state.invert = e.target.checked;
+            renderHalftoneQR();
+        });
+
+        // Reset Button
+        document.getElementById('btnReset').addEventListener('click', () => {
+            state.brightness = 10;
+            state.contrast = 35;
+            state.scale = 92;
+            state.minVersion = 10;
+            state.clearBg = true;
+            state.invert = false;
+
+            document.getElementById('rngBrightness').value = 10;
+            document.getElementById('rngContrast').value = 35;
+            document.getElementById('rngScale').value = 92;
+            document.getElementById('rngVersion').value = 10;
+            document.getElementById('chkClearBg').checked = true;
+            document.getElementById('chkInvert').checked = false;
+
+            document.getElementById('lblBrightness').textContent = '10';
+            document.getElementById('lblContrast').textContent = '35';
+            document.getElementById('lblScale').textContent = '92%';
+
+            renderHalftoneQR();
+        });
+
+        // Download Exact 800x800 PNG
+        document.getElementById('btnDownload800').addEventListener('click', () => {
+            const canvas = document.getElementById('outputCanvas');
+            const link = document.createElement('a');
+            link.download = 'qr-halftone-800x800.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        });
+
+        // Initial Render
+        window.addEventListener('DOMContentLoaded', () => {
+            renderHalftoneQR();
+        });
+    </script>
 </body>
 </html>
